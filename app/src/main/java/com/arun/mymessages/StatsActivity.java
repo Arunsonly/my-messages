@@ -1,0 +1,6 @@
+package com.arun.mymessages;
+import android.app.*;import android.os.*;import android.database.*;import android.provider.Telephony;import android.graphics.Color;import android.widget.*;import java.util.*;
+public class StatsActivity extends Activity{
+ public void onCreate(Bundle b){super.onCreate(b);LinearLayout x=new LinearLayout(this);x.setOrientation(LinearLayout.VERTICAL);x.setPadding(18,18,18,18);x.setBackgroundColor(0xfffaf8f4);TextView h=new TextView(this);h.setText("SMS Statistics");h.setTextSize(24);h.setTextColor(Color.WHITE);h.setBackgroundColor(0xff312c51);h.setPadding(18,18,18,18);x.addView(h);
+ int total=0,in=0,out=0,unread=0;long now=System.currentTimeMillis(),month=now-30L*24*60*60*1000;try{Cursor c=getContentResolver().query(Telephony.Sms.CONTENT_URI,new String[]{"type","read","date"},null,null,null);if(c!=null){while(c.moveToNext()){long d=c.getLong(2);if(d>=month){total++;if(c.getInt(0)==Telephony.Sms.MESSAGE_TYPE_INBOX)in++;if(c.getInt(0)==Telephony.Sms.MESSAGE_TYPE_SENT)out++;if(c.getInt(1)==0)unread++;}}c.close();}}catch(Exception e){}TextView v=new TextView(this);v.setText("Last 30 days\n\nMessages: "+total+"\nIncoming: "+in+"\nOutgoing: "+out+"\nUnread: "+unread);v.setTextSize(19);v.setTextColor(0xff312c51);v.setPadding(18,28,18,28);x.addView(v);setContentView(x);}
+}
