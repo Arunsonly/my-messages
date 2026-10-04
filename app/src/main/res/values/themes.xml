@@ -1,0 +1,1 @@
+<resources><style name="Theme.MyMessages" parent="android:style/Theme.Material.Light.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:colorAccent">@color/purple</item><item name="android:statusBarColor">@color/primary</item><item name="android:navigationBarColor">@color/primary</item></style></resources>
