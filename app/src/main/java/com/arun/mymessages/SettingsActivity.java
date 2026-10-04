@@ -27,6 +27,7 @@ public class SettingsActivity extends Activity{
  Button save=new Button(this);save.setText("Save settings");root.addView(save);save.setOnClickListener(v->{p.edit().putString("pin",pin.getText().toString()).apply();Toast.makeText(this,"Saved",Toast.LENGTH_SHORT).show();});
  Button about=new Button(this);about.setText("About My Messages");root.addView(about);about.setOnClickListener(v->new AlertDialog.Builder(this).setTitle("My Messages").setMessage("Private SMS manager • offline first\nV1: Inbox, Conversation, Search, Contacts, Dual SIM, Notifications, Backup, Privacy and Organization").setPositiveButton("OK",null).show());
  setContentView(root);}
+ int simIndex(String v){if("SIM 1".equals(v))return 1;if("SIM 2".equals(v))return 2;if("Default".equals(v))return 3;return 0;}
  boolean isDefaultSms(){if(Build.VERSION.SDK_INT>=29){RoleManager r=getSystemService(RoleManager.class);return r!=null&&r.isRoleHeld(RoleManager.ROLE_SMS);}return false;}
  void add(String a,String b){root.addView(tv(a+"\n"+b,15));}
 }
