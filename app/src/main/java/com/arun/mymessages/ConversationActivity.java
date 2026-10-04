@@ -2,9 +2,9 @@ package com.arun.mymessages;
 import android.app.*;import android.os.*;import android.content.*;import android.telephony.*;import android.graphics.Color;import android.view.*;import android.widget.*;import android.database.Cursor;import android.provider.Telephony;import java.text.*;import java.util.*;
 
 public class ConversationActivity extends Activity{
- LinearLayout msgs;String thread,number,name;int primary=Color.rgb(49,44,81),purple=Color.rgb(122,63,240);int subId=SubscriptionManager.INVALID_SUBSCRIPTION_ID;HashSet<Long> selected=new HashSet<>();
+ LinearLayout msgs;String thread,number,name;int primary=Color.rgb(49,44,81),purple=Color.rgb(122,63,240);int subId=SubscriptionManager.INVALID_SUBSCRIPTION_ID;HashSet<Long> selected=new HashSet<>();boolean dark;
  TextView t(String s,int z,int c){TextView v=new TextView(this);v.setText(s);v.setTextSize(z);v.setTextColor(c);v.setPadding(16,10,16,10);return v;}
- public void onCreate(Bundle b){super.onCreate(b);thread=getIntent().getStringExtra("thread");number=getIntent().getStringExtra("number");name=getIntent().getStringExtra("name");ui();load();}
+ public void onCreate(Bundle b){super.onCreate(b);dark=getSharedPreferences("settings",0).getBoolean("dark",false);thread=getIntent().getStringExtra("thread");number=getIntent().getStringExtra("number");name=getIntent().getStringExtra("name");ui();load();}
  void ui(){LinearLayout r=new LinearLayout(this);r.setOrientation(LinearLayout.VERTICAL);
    LinearLayout head=new LinearLayout(this);head.setBackgroundColor(primary);TextView h=t("‹  "+name+"\n"+number,18,Color.WHITE);h.setOnClickListener(v->finish());head.addView(h,new LinearLayout.LayoutParams(0,68,1));Button call=new Button(this);call.setText("☎");call.setOnClickListener(v->startActivity(new Intent(Intent.ACTION_DIAL,android.net.Uri.parse("tel:"+android.net.Uri.encode(number)))));head.addView(call,new LinearLayout.LayoutParams(58,68));r.addView(head);
    ScrollView s=new ScrollView(this);msgs=new LinearLayout(this);msgs.setOrientation(LinearLayout.VERTICAL);s.addView(msgs);r.addView(s,new LinearLayout.LayoutParams(-1,0,1));
@@ -18,7 +18,7 @@ public class ConversationActivity extends Activity{
  }
  void load(){msgs.removeAllViews();try{String sel=thread==null?"address=?":"thread_id=?";String arg=thread==null?number:thread;Cursor c=getContentResolver().query(Telephony.Sms.CONTENT_URI,new String[]{"_id","body","date","type","status","read"},sel,new String[]{arg},"date ASC");if(c!=null){while(c.moveToNext()){
    final long id=c.getLong(0),date=c.getLong(2);final String body=c.getString(1);boolean sent=c.getInt(3)==Telephony.Sms.MESSAGE_TYPE_SENT;String st=sent?status(c.isNull(4)?-1:c.getInt(4)):"";
-   TextView v=t(body+"\n"+new SimpleDateFormat("dd MMM hh:mm a").format(new Date(date))+(sent?" • "+st:""),15,sent?primary:Color.DKGRAY);v.setGravity(sent?Gravity.RIGHT:Gravity.LEFT);v.setBackgroundColor(sent?Color.rgb(240,195,142):Color.WHITE);
+   TextView v=t(body+"\n"+new SimpleDateFormat("dd MMM hh:mm a").format(new Date(date))+(sent?" • "+st:""),15,sent?primary:(dark?Color.rgb(235,230,240):Color.DKGRAY));v.setGravity(sent?Gravity.RIGHT:Gravity.LEFT);v.setBackgroundColor(sent?Color.rgb(240,195,142):(dark?Color.rgb(45,42,55):Color.WHITE));
    v.setOnLongClickListener(q->{messageMenu(id,body);return true;});msgs.addView(v,new LinearLayout.LayoutParams(-1,-2));}c.close();}}catch(Exception e){}}
  String status(int s){if(s<0)return "sent";switch(s){case Telephony.Sms.STATUS_COMPLETE:return "delivered";case Telephony.Sms.STATUS_PENDING:return "pending";case Telephony.Sms.STATUS_FAILED:return "failed";default:return "sent";}}
  void messageMenu(long id,String body){new AlertDialog.Builder(this).setItems(new String[]{"Copy","Delete message","Forward","Select message"},(d,w)->{if(w==0)((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(android.content.ClipData.newPlainText("message",body));else if(w==1)deleteMessage(id);else if(w==2){Intent i=new Intent(Intent.ACTION_SENDTO,android.net.Uri.parse("smsto:"));i.putExtra("sms_body",body);startActivity(i);}else{selected.add(id);bulkMessages();}}).show();}
