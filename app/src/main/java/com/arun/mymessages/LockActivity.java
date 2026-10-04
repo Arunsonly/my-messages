@@ -1,7 +1,7 @@
 package com.arun.mymessages;
-import android.app.*;import android.os.*;import android.content.*;import android.text.InputType;import android.view.*;import android.widget.*;import androidx.biometric.BiometricPrompt;import androidx.core.content.ContextCompat;import java.util.concurrent.Executor;
+import android.app.*;import androidx.fragment.app.FragmentActivity;import android.os.*;import android.content.*;import android.text.InputType;import android.view.*;import android.widget.*;import androidx.biometric.BiometricPrompt;import androidx.core.content.ContextCompat;import java.util.concurrent.Executor;
 
-public class LockActivity extends Activity{
+public class LockActivity extends FragmentActivity{
  public void onCreate(Bundle b){super.onCreate(b);SharedPreferences p=getSharedPreferences("settings",0);if(p.getBoolean("biometric",false)){showBiometric();}else showPin();}
  void showBiometric(){Executor ex=ContextCompat.getMainExecutor(this);BiometricPrompt prompt=new BiometricPrompt(this,ex,new BiometricPrompt.AuthenticationCallback(){public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult r){setResult(RESULT_OK);finish();}public void onAuthenticationError(int code,CharSequence msg){showPin();}public void onAuthenticationFailed(){}});BiometricPrompt.PromptInfo info=new BiometricPrompt.PromptInfo.Builder().setTitle("My Messages").setSubtitle("Unlock your private messages").setDescription("Use fingerprint or device biometric").setNegativeButtonText("Use PIN").build();prompt.authenticate(info);}
  void showPin(){final EditText e=new EditText(this);e.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_VARIATION_PASSWORD);e.setHint("Enter PIN");e.setTextSize(22);e.setPadding(30,30,30,30);
