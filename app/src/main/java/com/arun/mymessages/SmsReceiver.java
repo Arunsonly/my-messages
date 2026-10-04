@@ -19,7 +19,6 @@ public class SmsReceiver extends BroadcastReceiver{
    n.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c,android.R.drawable.ic_menu_view),"Mark read",mp).build());
    n.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c,android.R.drawable.ic_menu_close_clear_cancel),"Clear",cp).build());
    if(Build.VERSION.SDK_INT>=24){android.app.RemoteInput ri=new android.app.RemoteInput.Builder("reply").setLabel("Reply").build();Intent rep=new Intent(c,SmsReplyReceiver.class).putExtra("number",from);PendingIntent rp=PendingIntent.getBroadcast(c,nid+3,rep,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_MUTABLE);n.addAction(new Notification.Action.Builder(android.graphics.drawable.Icon.createWithResource(c,android.R.drawable.ic_menu_send),"Reply",rp).addRemoteInput(ri).build());}
-   if(Build.VERSION.SDK_INT>=26){if(!c.getSharedPreferences("settings",0).getBoolean("sound",true))n.setSilent(true);else if(!c.getSharedPreferences("settings",0).getBoolean("vibrate",true))n.setVibrate(new long[]{0});}
    nm.notify(nid,n.build());
  }
 }
