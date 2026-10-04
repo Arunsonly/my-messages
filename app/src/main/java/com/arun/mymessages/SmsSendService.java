@@ -1,0 +1,1 @@
+package com.arun.mymessages; import android.app.Service;import android.content.Intent;import android.os.IBinder; public class SmsSendService extends Service{public IBinder onBind(Intent i){return null;}public int onStartCommand(Intent i,int f,int id){stopSelf();return START_NOT_STICKY;}}
