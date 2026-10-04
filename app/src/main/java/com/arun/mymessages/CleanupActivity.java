@@ -1,0 +1,9 @@
+package com.arun.mymessages;
+import android.app.*;import android.os.*;import android.content.*;import android.database.*;import android.provider.Telephony;import android.widget.*;
+public class CleanupActivity extends Activity{
+ public void onCreate(Bundle b){super.onCreate(b);LinearLayout x=new LinearLayout(this);x.setOrientation(LinearLayout.VERTICAL);x.setPadding(18,18,18,18);x.setBackgroundColor(0xfffaf8f4);TextView h=new TextView(this);h.setText("Message Cleanup");h.setTextSize(24);h.setTextColor(0xffffffff);h.setBackgroundColor(0xff312c51);h.setPadding(18,18,18,18);x.addView(h);
+ Button old=new Button(this);old.setText("Delete messages older than 1 year");x.addView(old);old.setOnClickListener(v->confirm(365L*24*60*60*1000));
+ Button all=new Button(this);all.setText("Delete ALL messages");x.addView(all);all.setOnClickListener(v->confirm(Long.MAX_VALUE));
+ TextView n=new TextView(this);n.setText("Cleanup permanently removes SMS from the device database.");n.setPadding(10,20,10,10);x.addView(n);setContentView(x);}
+ void confirm(long age){new AlertDialog.Builder(this).setTitle("Permanent deletion").setMessage(age==Long.MAX_VALUE?"Delete all messages?":"Delete messages older than 1 year?").setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->{try{String where=age==Long.MAX_VALUE?null:"date < ?";String[] a=age==Long.MAX_VALUE?null:new String[]{String.valueOf(System.currentTimeMillis()-age)};int n=getContentResolver().delete(Telephony.Sms.CONTENT_URI,where,a);Toast.makeText(this,"Deleted "+n+" messages",Toast.LENGTH_LONG).show();}catch(Exception e){Toast.makeText(this,"Delete failed",Toast.LENGTH_LONG).show();}}).show();}
+}
