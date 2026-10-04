@@ -1,0 +1,5 @@
+package com.arun.mymessages;
+import android.content.*;import android.app.*;import android.os.*;import android.provider.Telephony;
+public class MmsReceiver extends BroadcastReceiver{
+ public void onReceive(Context c,Intent i){if(!Telephony.Sms.Intents.WAP_PUSH_DELIVER_ACTION.equals(i.getAction()))return;NotificationManager nm=(NotificationManager)c.getSystemService(Context.NOTIFICATION_SERVICE);if(Build.VERSION.SDK_INT>=26)nm.createNotificationChannel(new NotificationChannel("sms","Messages",NotificationManager.IMPORTANCE_HIGH));Notification.Builder n=Build.VERSION.SDK_INT>=26?new Notification.Builder(c,"sms"):new Notification.Builder(c);n.setSmallIcon(android.R.drawable.sym_action_email).setContentTitle("New multimedia message").setContentText("You received an MMS").setAutoCancel(true);nm.notify((int)(System.currentTimeMillis()%100000),n.build());}
+}
